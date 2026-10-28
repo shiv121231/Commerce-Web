@@ -1,8 +1,0 @@
-name = "one-pen"
-pages_build_output_dir = "./public"
-compatibility_date = "2025-01-01"
-
-[[d1_databases]]
-binding = "DB"
-database_name = "survey"
-database_id = "1b1ec3b4-ffa8-4906-b2ce-307d65dd7005"
