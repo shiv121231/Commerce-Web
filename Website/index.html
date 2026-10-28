@@ -100,11 +100,21 @@ footer p{color:var(--muted);margin-top:14px}
   #paper{inset:9vh 4vw 8vh}
 }
 @media (prefers-reduced-motion:reduce){.blob{animation:none}.card{transition:none}}
+
+/* "Other" tab: embedded live survey metrics */
+nav .tabs{display:flex;gap:4px;padding:4px;border-radius:99px;background:color-mix(in srgb,var(--text) 7%,transparent)}
+nav .tabs button{font:inherit;font-size:13px;font-weight:600;border:0;border-radius:99px;padding:7px 14px;background:transparent;color:var(--muted);cursor:pointer;transition:background .25s,color .25s}
+nav .tabs button[aria-selected="true"]{background:var(--surface);color:var(--text);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+#otherView{position:fixed;inset:0;z-index:9;background:var(--bg);overflow-y:auto;padding:100px 20px 60px;opacity:0;visibility:hidden;transition:opacity .4s,visibility .4s}
+#otherView.open{opacity:1;visibility:visible}
+#otherView .inner{max-width:1040px;margin:0 auto}
+#otherView iframe{display:block;width:100%;min-height:600px;border:0}
+@media (max-width:800px){nav{gap:10px;padding:8px 8px 8px 12px}nav b{display:none}}
 </style>
 </head>
 <body>
 <div id="bar"></div>
-<nav><b>One Pen</b><a href="#buy">Pre-order</a></nav>
+<nav><b>One Pen</b><div class="tabs" role="tablist"><button role="tab" data-tab="product" aria-selected="true">Product</button><button role="tab" data-tab="other" aria-selected="false">Other</button></div><a class="pre" href="#buy">Pre-order</a></nav>
 
 <div id="track">
   <div id="stage">
@@ -239,6 +249,15 @@ footer p{color:var(--muted);margin-top:14px}
   <p>A calmer pen, from $29.</p>
   <a href="#buy">Pre-order</a>
 </footer>
+
+<div id="otherView" aria-label="Other">
+  <div class="inner">
+    <div class="curl" style="font-size:30px">Student survey</div>
+    <h2>Live results</h2>
+    <p style="color:var(--muted);margin:12px 0 24px;font-size:18px">Anonymous answers from students, updating live. <a href="https://survey.essdee.workers.dev/" target="_blank" rel="noopener" style="color:var(--ink);font-weight:600">Take the survey</a></p>
+    <iframe id="metricsFrame" title="Live survey metrics"></iframe>
+  </div>
+</div>
 
 <script>
 (function(){
@@ -379,6 +398,28 @@ footer p{color:var(--muted);margin-top:14px}
   // reveal cards
   var io=new IntersectionObserver(function(es){es.forEach(function(e,i){if(e.isIntersecting){setTimeout(function(){e.target.classList.add('in')},i*110);io.unobserve(e.target)}})},{threshold:.25});
   $$('.card').forEach(function(c){io.observe(c)});
+})();
+</script>
+<script>
+(function(){
+  var SRC='https://survey.essdee.workers.dev/metrics?embed=1',ORIGIN='https://survey.essdee.workers.dev';
+  var view=document.getElementById('otherView'),frame=document.getElementById('metricsFrame');
+  var tabs=[].slice.call(document.querySelectorAll('nav .tabs button'));
+  function open(on){
+    if(on&&!frame.getAttribute('src'))frame.setAttribute('src',SRC);
+    view.classList.toggle('open',on);
+    document.body.style.overflow=on?'hidden':'';
+    if(on)view.scrollTop=0;
+    tabs.forEach(function(b){b.setAttribute('aria-selected',(b.dataset.tab==='other')===on)});
+    try{history.replaceState(null,'',on?'#other':location.pathname+location.search)}catch(e){}
+  }
+  tabs.forEach(function(b){b.addEventListener('click',function(){open(b.dataset.tab==='other')})});
+  document.querySelector('nav .pre').addEventListener('click',function(){open(false)});
+  addEventListener('message',function(e){
+    if(e.origin!==ORIGIN)return;
+    if(e.data&&e.data.type==='metrics-height')frame.style.height=e.data.h+'px';
+  });
+  if(location.hash==='#other')open(true);
 })();
 </script>
 </body>
