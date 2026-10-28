@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>One Pen — Live survey metrics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f2f0e9;--surface:#fbfaf6;--text:#1c1b19;--muted:#6a665d;--line:#ddd9cd;--ink:#f76f53;--yes:#14b8a6;--maybe:#f5a524;--no:#f76f53;color-scheme:light dark}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#151412;--surface:#201f1c;--text:#f2f0e9;--muted:#a39e92;--line:#36342f}}
+:root[data-theme="dark"]{--bg:#151412;--surface:#201f1c;--text:#f2f0e9;--muted:#a39e92;--line:#36342f}
+*{box-sizing:border-box;margin:0}
+body{background:var(--bg);color:var(--text);font-family:"DM Sans",-apple-system,"Helvetica Neue",Arial,sans-serif;-webkit-font-smoothing:antialiased;padding:0 20px 80px}
+.wrap{max-width:1040px;margin:0 auto;padding-top:56px}
+.curl{font-family:Caveat,"Segoe Script",cursive;font-weight:700;color:var(--ink);font-size:28px}
+h1{font-size:clamp(36px,6vw,64px);font-weight:600;letter-spacing:-.045em;line-height:1;margin-top:4px}
+h3{font-size:18px;letter-spacing:-.02em;margin-bottom:16px}
+.lead{color:var(--muted);font-size:18px;margin-top:12px}
+.live{display:inline-flex;align-items:center;gap:8px;margin-top:20px;font-size:14px;color:var(--muted);padding:7px 14px;border:1px solid var(--line);border-radius:99px;background:var(--surface)}
+.dot{width:9px;height:9px;border-radius:50%;background:var(--yes);animation:pulse 1.8s infinite}
+.live.off .dot{background:var(--no);animation:none}
+@keyframes pulse{50%{box-shadow:0 0 0 6px color-mix(in srgb,var(--yes) 0%,transparent);opacity:.5}}
+.grid{display:grid;gap:14px;margin-top:28px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:26px;padding:24px}
+.kpi small{color:var(--muted);font-size:14px;font-weight:500}
+.kpi strong{display:block;font-size:clamp(38px,5vw,56px);font-weight:600;letter-spacing:-.04em;margin-top:6px;line-height:1}
+.kpi em{font-style:normal;font-size:.45em;color:var(--muted);font-weight:500}
+.hl strong{color:var(--ink)}
+.two{display:grid;gap:14px;margin-top:14px;grid-template-columns:repeat(auto-fit,minmax(320px,1fr))}
+.row{display:grid;grid-template-columns:minmax(80px,170px) 1fr 34px;gap:12px;align-items:center;font-size:14px;margin:9px 0}
+.row span{color:var(--muted)}
+.row b{text-align:right;font-weight:600}
+.track{height:12px;border-radius:99px;background:color-mix(in srgb,var(--text) 8%,transparent);overflow:hidden}
+.track i{display:block;height:100%;border-radius:99px;background:var(--ink);transition:width .8s cubic-bezier(.2,.8,.2,1)}
+.q{margin:16px 0}
+.q p{font-size:14px;margin-bottom:8px}
+.stack{display:flex;height:26px;border-radius:99px;overflow:hidden;background:color-mix(in srgb,var(--text) 8%,transparent)}
+.stack i{display:grid;place-items:center;font-style:normal;font-size:12px;font-weight:600;color:#fff;transition:flex-grow .8s;min-width:0;overflow:hidden}
+.c-Yes{background:var(--yes)}.c-Maybe,.c-Never{background:var(--maybe)}.c-No{background:var(--no)}
+.legend{display:flex;gap:16px;font-size:13px;color:var(--muted);margin-bottom:6px}
+.legend span::before{content:"";display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;background:var(--c)}
+.days{display:flex;align-items:flex-end;gap:6px;height:120px}
+.days div{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:6px;height:100%;font-size:11px;color:var(--muted)}
+.days i{width:100%;border-radius:8px 8px 3px 3px;background:var(--ink);min-height:3px;transition:height .8s}
+.empty{color:var(--muted);font-size:15px;padding:30px 0;text-align:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="curl">Live metrics</div>
+  <h1>How students feel about exams</h1>
+  <p class="lead">Anonymous, aggregated results from the One Pen survey. Updates automatically.</p>
+  <div class="live off" id="live"><i class="dot"></i><span id="status">Connecting…</span></div>
+
+  <div class="grid">
+    <div class="card kpi"><small>Responses</small><strong id="total">–</strong></div>
+    <div class="card kpi"><small>Last 24 hours</small><strong id="d24">–</strong></div>
+    <div class="card kpi"><small>Avg. stress before exams</small><strong><span id="af">–</span><em> / 5</em></strong></div>
+    <div class="card kpi"><small>Avg. effect on performance</small><strong><span id="ai">–</span><em> / 5</em></strong></div>
+  </div>
+  <div class="grid">
+    <div class="card kpi hl"><small>Want a quote / stress-relief pen</small><strong id="h1">–</strong></div>
+    <div class="card kpi hl"><small>Think quotes help with exam stress</small><strong id="h2">–</strong></div>
+    <div class="card kpi hl"><small>Think a stress-relief grip helps focus</small><strong id="h3">–</strong></div>
+  </div>
+
+  <div class="two">
+    <div class="card"><h3>Stress before exams</h3><div id="freq"></div></div>
+    <div class="card"><h3>Effect on performance</h3><div id="impact"></div></div>
+    <div class="card"><h3>Year level</h3><div id="years"></div></div>
+    <div class="card"><h3>How they cope today</h3><div id="coping"></div></div>
+  </div>
+  <div class="card" style="margin-top:14px"><h3>Responses, last 14 days</h3><div class="days" id="daily"></div></div>
+  <div class="card" style="margin-top:14px"><h3>Yes / No / Maybe</h3>
+    <div class="legend"><span style="--c:var(--yes)">Yes</span><span style="--c:var(--maybe)">Maybe / never thought</span><span style="--c:var(--no)">No</span></div>
+    <div id="qs"></div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var $=function(i){return document.getElementById(i)};
+  var esc=function(s){return String(s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})};
+  var LABELS={calmStationery:'Uses stationery that feels motivating or calming',wantPen:'Would like a pen with quotes or stress-relief features',favPen:'Has a favourite pen',customPens:'Likes customisable pens',annoyed:'Annoyed without their usual pen',usedToy:'Has used a stress toy (e.g. Nee-Doh)',toyHelps:'Stress toy would help with exam stress',quotesInspire:'Motivational quotes inspire them',quotesHelp:'Quotes would help with exam stress',gripFocus:'Stress-relief grip would help focus',quotePenCalm:'Quote pen would make them calmer in a test'};
+  var shown={};
+
+  function tween(id,to,dec){
+    var el=$(id),from=shown[id]||0;shown[id]=to;
+    if(to==null||isNaN(to)){el.textContent='–';return}
+    var t0=performance.now();
+    (function f(n){var k=Math.min(1,(n-t0)/700),e=1-Math.pow(1-k,3),v=from+(to-from)*e;
+      el.textContent=dec?v.toFixed(dec):Math.round(v);if(k<1)requestAnimationFrame(f)})(t0);
+  }
+  function bars(id,rows){
+    var max=Math.max.apply(null,rows.map(function(r){return r.n}).concat(1));
+    $(id).innerHTML=rows.length?rows.map(function(r){return '<div class="row"><span>'+esc(r.l)+'</span><div class="track"><i style="width:'+(r.n/max*100)+'%"></i></div><b>'+r.n+'</b></div>'}).join(''):'<div class="empty">No data yet</div>';
+  }
+  function pct(q,k){var t=0,y=(q[k]||0);Object.keys(q).forEach(function(x){t+=q[x]});return t?Math.round(y/t*100):null}
+
+  function render(s){
+    tween('total',s.total);tween('d24',s.last24h);
+    tween('af',s.avgFreq,1);tween('ai',s.avgImpact,1);
+    [['h1','wantPen'],['h2','quotesHelp'],['h3','gripFocus']].forEach(function(h){
+      var p=pct(s.questions[h[1]],'Yes');$(h[0]).textContent=p==null?'–':p+'%';
+    });
+    var dist=function(m){return [1,2,3,4,5].map(function(n){return{l:n+(n===1?' · Never':n===5?' · Always':''),n:m[n]||0}})};
+    bars('freq',dist(s.freq));bars('impact',dist(s.impact));
+    bars('years',s.years);
+    bars('coping',s.coping.map(function(c){return{l:c.label,n:c.n}}));
+
+    var days=[],now=new Date();
+    for(var i=13;i>=0;i--){var d=new Date(now-i*864e5).toISOString().slice(0,10);days.push({d:d,n:s.daily[d]||0})}
+    var mx=Math.max.apply(null,days.map(function(x){return x.n}).concat(1));
+    $('daily').innerHTML=days.map(function(x){return '<div title="'+x.d+': '+x.n+'"><i style="height:'+(x.n/mx*88)+'%"></i><span>'+x.d.slice(8)+'</span></div>'}).join('');
+
+    $('qs').innerHTML=Object.keys(LABELS).map(function(k){
+      var q=s.questions[k]||{},t=0;Object.keys(q).forEach(function(x){t+=q[x]});
+      var seg=['Yes','Maybe','Never thought of it','No'].filter(function(o){return q[o]}).map(function(o){
+        var p=Math.round(q[o]/t*100);
+        return '<i class="c-'+o.split(' ')[0]+'" style="flex-grow:'+q[o]+'">'+(p>=12?p+'%':'')+'</i>';
+      }).join('');
+      return '<div class="q"><p>'+esc(LABELS[k])+'</p><div class="stack">'+(t?seg:'')+'</div></div>';
+    }).join('');
+  }
+
+  var timer;
+  async function load(){
+    try{
+      var r=await fetch('/api/stats',{cache:'no-store'});
+      if(!r.ok)throw new Error(r.status);
+      render(await r.json());
+      $('live').classList.remove('off');
+      $('status').textContent='Live · updated '+new Date().toLocaleTimeString();
+    }catch(e){
+      $('live').classList.add('off');$('status').textContent='Offline · retrying…';
+    }
+  }
+  function start(){load();clearInterval(timer);timer=setInterval(load,5000)}
+  document.addEventListener('visibilitychange',function(){document.hidden?clearInterval(timer):start()});
+  start();
+})();
+</script>
+</body>
+</html>

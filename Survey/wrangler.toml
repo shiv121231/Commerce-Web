@@ -1,0 +1,8 @@
+name = "one-pen"
+pages_build_output_dir = "./public"
+compatibility_date = "2025-01-01"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "onepen-survey"
+database_id = "PASTE-ID-FROM-wrangler-d1-create"

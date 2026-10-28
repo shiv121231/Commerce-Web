@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>One Pen — A calmer pen</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f2f0e9; --surface:#fbfaf6; --text:#1c1b19; --muted:#6a665d; --line:#ddd9cd;
+  --ink:#f76f53; --grip:#ffb199;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  color-scheme:light dark;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){--bg:#151412;--surface:#201f1c;--text:#f2f0e9;--muted:#a39e92;--line:#36342f}
+}
+:root[data-theme="dark"]{--bg:#151412;--surface:#201f1c;--text:#f2f0e9;--muted:#a39e92;--line:#36342f}
+*{box-sizing:border-box;margin:0}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{background:var(--bg);color:var(--text);font-family:"DM Sans",-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+
+nav{position:fixed;top:calc(14px + env(safe-area-inset-top,0px));left:50%;transform:translateX(-50%);z-index:10;display:flex;align-items:center;gap:28px;padding:8px 8px 8px 22px;border-radius:99px;background:color-mix(in srgb,var(--surface) 78%,transparent);backdrop-filter:blur(18px);border:1px solid var(--line);font-size:14px;white-space:nowrap}
+nav b{font-weight:700;letter-spacing:-.02em}
+nav a{text-decoration:none;font-weight:600;color:#fff;background:var(--ink);padding:9px 18px;border-radius:99px;transition:background .5s}
+#bar{position:fixed;top:0;left:0;height:3px;width:0;background:var(--ink);z-index:11;transition:background .5s}
+
+#track{height:760vh;position:relative}
+#stage{position:sticky;top:0;height:100vh;overflow:hidden}
+.blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.32;transition:background 1s;animation:float 16s ease-in-out infinite alternate}
+.b1{width:46vmax;height:46vmax;left:-12vmax;top:-14vmax;background:var(--ink)}
+.b2{width:40vmax;height:40vmax;right:-12vmax;bottom:-16vmax;background:var(--grip);animation-delay:-6s}
+@keyframes float{to{transform:translate(6vmax,4vmax) scale(1.12)}}
+
+#paper{position:absolute;inset:9vh 6vw 8vh;background:#fffdf6;border-radius:18px;opacity:0;transform:rotate(-1.2deg);box-shadow:0 30px 70px rgba(40,30,10,.22);
+  background-image:repeating-linear-gradient(transparent 0 41px,rgba(110,140,190,.28) 41px 42px);background-position:0 24px}
+#paper::before{content:"";position:absolute;left:7%;top:0;bottom:0;width:2px;background:rgba(247,111,83,.35)}
+#ink{position:absolute;inset:0;width:100%;height:100%;opacity:0;pointer-events:none}
+#inkPath{fill:none;stroke:var(--ink);stroke-width:5;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:1;transition:stroke .4s}
+
+#pen{position:absolute;left:50%;top:50%;height:70vh;aspect-ratio:100/640;margin:-35vh 0 0 -5.47vh;will-change:transform;z-index:3}
+#pen svg{width:100%;height:100%;overflow:visible;filter:drop-shadow(0 26px 28px rgba(40,25,10,.28))}
+#qgroup{transition:opacity .6s}
+
+.panel{position:absolute;inset:0;display:flex;padding:0 7vw;pointer-events:none;z-index:4}
+.panel>div{max-width:440px}
+.panel.left{align-items:center;justify-content:flex-start}
+.panel.right{align-items:center;justify-content:flex-end}
+.panel.center{align-items:center;justify-content:center;text-align:center;padding-bottom:42vh}
+.panel.center>div{max-width:900px}
+.panel.bottom{align-items:flex-end;justify-content:center;text-align:center;padding-bottom:7vh}
+.panel>div{position:relative;isolation:isolate}
+.panel.bottom>div{max-width:620px;padding:22px 30px 26px}
+.panel.bottom>div::before{content:"";position:absolute;inset:0;z-index:-1;border-radius:28px;background:color-mix(in srgb,var(--surface) 84%,transparent);backdrop-filter:blur(14px);border:1px solid var(--line);opacity:var(--o,0)}
+.w{display:inline-block;will-change:filter,opacity}
+h1{font-size:clamp(54px,10.5vw,150px);font-weight:600;letter-spacing:-.05em;line-height:.98}
+h2{font-size:clamp(32px,4.4vw,60px);font-weight:600;letter-spacing:-.04em;line-height:1.05}
+.panel p{font-size:clamp(16px,1.7vw,20px);color:var(--muted);line-height:1.5;margin-top:16px}
+.eyebrow{margin-bottom:6px}
+.curl{font-family:Caveat,"Segoe Script","Bradley Hand",cursive;font-style:normal;font-weight:700;color:var(--ink);font-size:1.3em;transition:color .5s}
+h1 .curl{font-size:1.18em}
+mark{color:inherit;background:none}
+mark .w{padding:0 .13em;margin:0 -.13em;border-radius:4px;background:linear-gradient(transparent 58%,color-mix(in srgb,var(--ink) 42%,transparent) 58%)}
+.hint{margin-top:34px;font-size:14px;color:var(--muted)}
+.chips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:18px}
+.chips span{font-size:13px;font-weight:600;padding:7px 14px;border-radius:99px;border:1px solid var(--line);background:var(--bg)}
+.row{margin-top:20px;pointer-events:auto}
+.row small{display:block;font-size:13px;font-weight:600;color:var(--muted);margin-bottom:10px}
+.sw{display:flex;gap:12px}
+.sw button{width:38px;height:38px;border-radius:50%;border:3px solid var(--bg);outline:2px solid transparent;background:var(--c);cursor:pointer;transition:transform .25s,outline-color .25s}
+.sw button:hover{transform:scale(1.12)}
+.sw button[aria-pressed="true"]{outline-color:var(--text)}
+
+section.feat{max-width:1040px;margin:0 auto;padding:130px 24px 40px}
+.feat h2{text-align:center;margin-bottom:12px}
+.feat>p{text-align:center;color:var(--muted);font-size:19px;margin-bottom:52px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:28px;padding:28px;opacity:0;transform:translateY(24px);filter:blur(8px);transition:all .8s}
+.card.in{opacity:1;transform:none;filter:none}
+.card i{display:block;width:34px;height:34px;border-radius:12px;background:var(--c,var(--ink));margin-bottom:20px}
+.card h3{font-size:21px;letter-spacing:-.02em;margin-bottom:8px}
+.card p{color:var(--muted);line-height:1.5;font-size:15px}
+footer{text-align:center;padding:110px 24px 140px}
+footer h2{font-size:clamp(40px,6vw,84px)}
+footer a{display:inline-block;background:var(--ink);color:#fff;text-decoration:none;font-weight:600;padding:16px 32px;border-radius:99px;font-size:17px;margin-top:28px;transition:background .5s,transform .2s}
+footer a:hover{transform:translateY(-2px)}
+footer p{color:var(--muted);margin-top:14px}
+
+@media (max-width:800px){
+  nav{gap:16px;padding-left:16px}
+  .panel.left,.panel.right{align-items:flex-end;justify-content:center;text-align:center;padding-bottom:7vh}
+  .panel.left>div,.panel.right>div{padding:20px 24px}
+  .panel.left>div::before,.panel.right>div::before{content:"";position:absolute;inset:0;z-index:-1;border-radius:26px;background:color-mix(in srgb,var(--surface) 84%,transparent);backdrop-filter:blur(14px);border:1px solid var(--line);opacity:var(--o,0)}
+  .sw{justify-content:center}
+  #pen{height:56vh;margin-top:-28vh;margin-left:-4.4vh}
+  #paper{inset:9vh 4vw 8vh}
+}
+@media (prefers-reduced-motion:reduce){.blob{animation:none}.card{transition:none}}
+</style>
+</head>
+<body>
+<div id="bar"></div>
+<nav><b>One Pen</b><a href="#buy">Pre-order</a></nav>
+
+<div id="track">
+  <div id="stage">
+    <div class="blob b1"></div><div class="blob b2"></div>
+    <div id="paper"></div>
+    <svg id="ink" aria-hidden="true"><path id="inkPath" pathLength="1"/></svg>
+
+    <div id="pen" aria-label="One Pen">
+      <svg viewBox="0 0 100 640" aria-hidden="true">
+        <defs>
+          <linearGradient id="pearl" x1="0" x2="1"><stop offset="0" stop-color="#b9b3a5"/><stop offset=".18" stop-color="#f1ede3"/><stop offset=".4" stop-color="#fffdf8"/><stop offset=".72" stop-color="#e5e0d3"/><stop offset="1" stop-color="#a39d8f"/></linearGradient>
+          <linearGradient id="shade" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#000" stop-opacity=".14"/><stop offset=".06" stop-color="#000" stop-opacity="0"/><stop offset=".94" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".18"/></linearGradient>
+          <linearGradient id="metal" x1="0" x2="1"><stop offset="0" stop-color="#76767b"/><stop offset=".28" stop-color="#f7f7f9"/><stop offset=".52" stop-color="#b4b4ba"/><stop offset=".78" stop-color="#e6e6ea"/><stop offset="1" stop-color="#67676c"/></linearGradient>
+          <linearGradient id="eraser" x1="0" x2="1"><stop offset="0" stop-color="#d9807a"/><stop offset=".3" stop-color="#ffc9c4"/><stop offset=".7" stop-color="#f1a09a"/><stop offset="1" stop-color="#c76c66"/></linearGradient>
+          <linearGradient id="gripg" x1="0" x2="1"><stop offset="0" style="stop-color:color-mix(in srgb,var(--grip) 62%,black)"/><stop offset=".3" style="stop-color:color-mix(in srgb,var(--grip) 70%,white)"/><stop offset=".6" style="stop-color:var(--grip)"/><stop offset="1" style="stop-color:color-mix(in srgb,var(--grip) 58%,black)"/></linearGradient>
+          <linearGradient id="inkg" x1="0" x2="1"><stop offset="0" style="stop-color:color-mix(in srgb,var(--ink) 60%,black)"/><stop offset=".3" style="stop-color:color-mix(in srgb,var(--ink) 75%,white)"/><stop offset=".6" style="stop-color:var(--ink)"/><stop offset="1" style="stop-color:color-mix(in srgb,var(--ink) 55%,black)"/></linearGradient>
+          <radialGradient id="dimple"><stop offset="0" stop-color="#000" stop-opacity=".3"/><stop offset=".75" stop-color="#000" stop-opacity=".08"/><stop offset="1" stop-color="#fff" stop-opacity=".25"/></radialGradient>
+          <radialGradient id="blob" cx=".35" cy=".3" r=".8"><stop offset="0" style="stop-color:color-mix(in srgb,var(--grip) 40%,white)"/><stop offset=".5" style="stop-color:var(--grip)"/><stop offset="1" style="stop-color:color-mix(in srgb,var(--grip) 55%,black)"/></radialGradient>
+        </defs>
+
+        <rect x="66" y="104" width="9" height="158" rx="4.5" fill="url(#metal)"/>
+        <path d="M32 72V30a18 18 0 0 1 36 0v42z" fill="url(#eraser)"/>
+        <rect x="36" y="20" width="3" height="42" rx="1.5" fill="#fff" opacity=".4"/>
+        <rect x="30" y="68" width="40" height="26" rx="2" fill="url(#metal)"/>
+        <g stroke="#000" stroke-opacity=".22" stroke-width=".6"><path d="M30 75h40M30 81h40M30 87h40"/></g>
+
+        <rect x="30" y="92" width="40" height="348" fill="url(#pearl)"/>
+        <rect x="30" y="92" width="40" height="348" fill="url(#shade)"/>
+        <rect x="35" y="100" width="2.6" height="326" rx="1.3" fill="#fff" opacity=".55"/>
+
+        <rect x="34.5" y="127" width="31" height="70" rx="4.5" fill="#2a2926"/>
+        <rect x="36.2" y="128.7" width="27.6" height="66.6" rx="3" fill="#e4e2d7"/>
+        <g id="qgroup" font-family="Georgia,'Times New Roman',serif" text-anchor="middle" fill="#2a2926">
+          <text id="qday" x="50" y="137" font-size="3.2" letter-spacing=".5" font-family="DM Sans,Arial,sans-serif" font-weight="700" opacity=".6">TUE</text>
+          <path d="M44 140.5h12" stroke="#2a2926" stroke-width=".4" opacity=".4"/>
+          <text id="qtext" x="50" y="160" font-size="4.7" font-style="italic"></text>
+        </g>
+        
+
+        <rect x="30" y="296" width="40" height="3.5" fill="url(#metal)"/>
+        <rect x="30" y="299.5" width="40" height="20" fill="url(#inkg)"/>
+        <rect x="35" y="301" width="2.6" height="17" rx="1.3" fill="#fff" opacity=".5"/>
+        <rect x="30" y="319.5" width="40" height="3.5" fill="url(#metal)"/>
+
+        <path d="M30 438h40l-2 12H32z" fill="url(#metal)"/>
+        <path d="M32 450C24 472 24 524 33 550H67C76 524 76 472 68 450Z" fill="url(#gripg)"/>
+        <g fill="url(#dimple)">
+          <circle cx="41" cy="470" r="2.7"/><circle cx="50" cy="470" r="2.7"/><circle cx="59" cy="470" r="2.7"/>
+          <circle cx="36.5" cy="485" r="2.7"/><circle cx="45.5" cy="485" r="2.7"/><circle cx="54.5" cy="485" r="2.7"/><circle cx="63.5" cy="485" r="2.7"/>
+          <circle cx="41" cy="500" r="2.7"/><circle cx="50" cy="500" r="2.7"/><circle cx="59" cy="500" r="2.7"/>
+          <circle cx="36.5" cy="515" r="2.7"/><circle cx="45.5" cy="515" r="2.7"/><circle cx="54.5" cy="515" r="2.7"/><circle cx="63.5" cy="515" r="2.7"/>
+          <circle cx="41" cy="530" r="2.7"/><circle cx="50" cy="530" r="2.7"/><circle cx="59" cy="530" r="2.7"/>
+        </g>
+        <rect x="37" y="458" width="2.6" height="82" rx="1.3" fill="#fff" opacity=".28"/>
+        <ellipse cx="21" cy="494" rx="12.5" ry="10.5" fill="url(#blob)"/>
+        <ellipse cx="17" cy="490" rx="4" ry="2.6" fill="#fff" opacity=".5"/>
+        <ellipse cx="79" cy="522" rx="8.5" ry="7.5" fill="url(#blob)"/>
+        <ellipse cx="76.5" cy="519.5" rx="2.8" ry="1.8" fill="#fff" opacity=".5"/>
+
+        <path d="M33 550h34L55 606H45z" fill="url(#metal)"/>
+        <path d="M45 606h10l-5 17z" fill="#38383c"/>
+        <circle cx="50" cy="623.5" r="2.4" fill="#1d1d20"/>
+        <circle cx="49.2" cy="622.7" r=".7" fill="#fff" opacity=".7"/>
+      </svg>
+    </div>
+
+    <div class="panel center" data-a="-1" data-b=".11" data-intro>
+      <div>
+        <h1>A <em class="curl">calmer</em> pen</h1>
+        <p>One Pen is made for students who want less frustration and more flow.</p>
+        <div class="hint blk">Scroll slowly. Breathe.</div>
+      </div>
+    </div>
+
+    <div class="panel left" data-a=".15" data-b=".33">
+      <div>
+        <div class="eyebrow"><em class="curl">Daily calm</em></div>
+        <h2>A tiny screen with a <mark>kind word</mark> every day.</h2>
+        <p>Motivational quotes live inside the pen’s own e-ink display. No app, no phone, no distractions, just a gentle nudge when you pick it up.</p>
+      </div>
+    </div>
+
+    <div class="panel right" data-a=".35" data-b=".49">
+      <div>
+        <div class="eyebrow"><em class="curl">Fidget friendly</em></div>
+        <h2>Squish. <mark>Breathe.</mark> Then write.</h2>
+        <p>A soft, customisable grip with snap-on Nee-Doh and squishy charms, so nervous hands always have somewhere to go.</p>
+      </div>
+    </div>
+
+    <div class="panel left" data-a=".51" data-b=".63">
+      <div>
+        <div class="eyebrow"><em class="curl">No more panic</em></div>
+        <h2>Mistakes are just <em class="curl">practice.</em></h2>
+        <p>The supplied ink is <mark>fully erasable</mark>, and the built-in rubber eraser makes slips vanish.</p>
+      </div>
+    </div>
+
+    <div class="panel bottom" data-a=".65" data-b=".88">
+      <div>
+        <div class="eyebrow"><em class="curl">Your ink, your way</em></div>
+        <h2>Bring your <mark>favourite ink</mark>.</h2>
+        <p>One Pen fits refills from most pens you already love, so the ink you trust glides just as smoothly.</p>
+        <div class="chips blk"><span>Gel</span><span>Ballpoint</span><span>Fineliner</span><span>Rollerball</span></div>
+      </div>
+    </div>
+
+    <div class="panel right" data-a=".91" data-b="1.3">
+      <div>
+        <div class="eyebrow"><em class="curl">Pick your calm</em></div>
+        <h2>Make it <em class="curl">yours.</em></h2>
+        <div class="row blk"><small>Erasable ink colour</small><div class="sw" id="inks"></div></div>
+        <div class="row blk"><small>Grip colour</small><div class="sw" id="grips"></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<section class="feat">
+  <h2>Everything for a <em class="curl">calmer</em> term.</h2>
+  <p>Small details that take the stress out of studying.</p>
+  <div class="grid">
+    <div class="card"><i style="--c:#f76f53"></i><h3>Erasable ink</h3><p>Write boldly, rub it out with the rubber eraser, and start again.</p></div>
+    <div class="card"><i style="--c:#14b8a6"></i><h3>Any refill</h3><p>Fits many common ink form factors, so use the ink you love.</p></div>
+    <div class="card"><i style="--c:#8b5cf6"></i><h3>Daily quote</h3><p>An e-ink display cycles through stored quotes, no battery drain from apps.</p></div>
+    <div class="card"><i style="--c:#f5a524"></i><h3>Squish grip</h3><p>Swap grips and clip on Nee-Dohs or squishies for stress relief mid-lecture.</p></div>
+  </div>
+</section>
+
+<footer id="buy">
+  <h2>One Pen.</h2>
+  <p>A calmer pen, from $29.</p>
+  <p><a href="/survey.html" style="color:inherit">Take our two-minute student survey</a></p>
+  <a href="#buy">Pre-order</a>
+</footer>
+
+<script>
+(function(){
+  var $=function(s){return document.querySelector(s)};
+  var $$=function(s,r){return [].slice.call((r||document).querySelectorAll(s))};
+  var clamp=function(v,a,b){return Math.min(b,Math.max(a,v))};
+  var smooth=function(t){t=clamp(t,0,1);return t*t*(3-2*t)};
+  var lerp=function(a,b,t){return a+(b-a)*t};
+  var track=$('#track'),stage=$('#stage'),pen=$('#pen'),bar=$('#bar'),paper=$('#paper'),inkSvg=$('#ink'),inkPath=$('#inkPath');
+  var W,H,PH,mobile,path=[],p=0,intro=0;
+
+  // [p, rot, scale, focus y (pen units), X, Y, mobileX, mobileY]
+  var KF=[
+    [0,   24, .8, 320, 0,   .1, 0, .14],
+    [.2,  0,  4.4,162, .22, 0,  0,-.14],
+    [.38, 0,  3.2,495,-.22, 0,  0,-.14],
+    [.54, 180,3.4, 40, .22, 0,  0,-.14],
+    [.66, 32, 1.8,623, 0,   0,  0, 0],
+    [.88, 32, 1.8,623, 0,   0,  0, 0],
+    [1,   0,  1.05,320,-.2, 0,  0,-.17]
+  ];
+
+  // split text into words for the blur reveal
+  var panels=$$('.panel').map(function(el){
+    var words=[];
+    (function walk(n){
+      [].slice.call(n.childNodes).forEach(function(c){
+        if(c.nodeType===3){
+          var f=document.createDocumentFragment();
+          c.nodeValue.split(/(\s+)/).forEach(function(t){
+            if(!t)return;
+            if(/^\s+$/.test(t)){f.appendChild(document.createTextNode(' '))}
+            else{var s=document.createElement('span');s.className='w';s.textContent=t;words.push(s);f.appendChild(s)}
+          });
+          n.replaceChild(f,c);
+        }else if(c.nodeType===1&&!c.classList.contains('blk')){walk(c)}
+      });
+    })(el);
+    return {el:el,a:+el.dataset.a,b:+el.dataset.b,words:words,blks:$$('.blk',el),intro:el.hasAttribute('data-intro')};
+  });
+
+  function layout(){
+    W=stage.clientWidth;H=stage.clientHeight;mobile=W<=800;PH=pen.offsetHeight;
+    var left=W*(mobile?.14:.18),L=W*(mobile?.72:.64),y0=H*(mobile?.4:.55),amp=H*(mobile?.05:.07),k=mobile?5:7,c=1.25/(2*Math.PI*k),d='';
+    path=[];
+    for(var i=0;i<=360;i++){
+      var u=i/360,th=2*Math.PI*k*u,x=left+L*(u-c*Math.sin(th)),y=y0-amp*Math.cos(th);
+      path.push([x,y]);d+=(i?'L':'M')+x.toFixed(1)+' '+y.toFixed(1);
+    }
+    inkSvg.setAttribute('viewBox','0 0 '+W+' '+H);
+    inkPath.setAttribute('d',d);
+    KF[4][4]=path[0][0]/W-.5;KF[4][5]=path[0][1]/H-.5;
+    KF[5][4]=path[360][0]/W-.5;KF[5][5]=path[360][1]/H-.5;
+    update();
+  }
+
+  function update(){
+    var max=track.offsetHeight-H;
+    p=clamp(-track.getBoundingClientRect().top/max,0,1);
+    bar.style.width=(p*100)+'%';
+
+    var i=0;while(i<KF.length-2&&p>KF[i+1][0])i++;
+    var a=KF[i],b=KF[i+1],t=smooth(smooth((p-a[0])/(b[0]-a[0])));
+    var ax=(mobile&&i!==4)?a[6]:a[4], ay=(mobile&&i!==4)?a[7]:a[5];
+    var bx=(mobile&&i+1!==4&&i+1!==5)?b[6]:b[4], by=(mobile&&i+1!==4&&i+1!==5)?b[7]:b[5];
+    var rot=lerp(a[1],b[1],t),s=lerp(a[2],b[2],t),fy=lerp(a[3],b[3],t),X=lerp(ax,bx,t),Y=lerp(ay,by,t);
+
+    var q=clamp((p-.66)/.22,0,1);
+    if(i===4){
+      var pt=path[Math.round(q*360)];
+      X=pt[0]/W-.5;Y=pt[1]/H-.5;rot=32+3*Math.sin(q*16);
+    }
+    var rad=rot*Math.PI/180,d=(fy/640-.5)*PH*s;
+    var tx=X*W+d*Math.sin(rad),ty=Y*H-d*Math.cos(rad);
+    pen.style.transform='translate('+tx.toFixed(1)+'px,'+ty.toFixed(1)+'px) rotate('+rot.toFixed(2)+'deg) scale('+s.toFixed(3)+')';
+
+    var pv=smooth((p-.6)/.05)*(1-smooth((p-.89)/.04));
+    paper.style.opacity=pv;inkSvg.style.opacity=pv;
+    inkPath.style.strokeDashoffset=q<.003?1.01:1-q;
+
+    panels.forEach(function(pn){
+      var f=.04,e=1-smooth((p-(pn.b-f))/f);
+      var k=pn.intro?(p>.02?1:intro):(p-pn.a)/.07;
+      var n=pn.words.length;
+      pn.words.forEach(function(w,j){
+        var v=clamp(k*(n+4)-j,0,1),o=v*e,bl=Math.max(1-v,1-e)*12;
+        w.style.opacity=o.toFixed(3);
+        w.style.filter=bl>.1?'blur('+bl.toFixed(1)+'px)':'none';
+      });
+      var bv=smooth(clamp(k*1.3-.3,0,1))*e;
+      pn.blks.forEach(function(el){
+        el.style.opacity=bv.toFixed(3);
+        el.style.filter=bv<.98?'blur('+((1-bv)*10).toFixed(1)+'px)':'none';
+      });
+      pn.el.style.pointerEvents=(e*clamp(k,0,1))>.6?'auto':'none';
+      pn.el.style.setProperty('--o',(e*smooth((p-pn.a)/.03)).toFixed(3));
+    });
+  }
+
+  var tick=false;
+  addEventListener('scroll',function(){if(tick)return;tick=true;requestAnimationFrame(function(){update();tick=false})},{passive:true});
+  addEventListener('resize',layout);
+
+  var t0=performance.now();
+  (function loop(){intro=clamp((performance.now()-t0-250)/1500,0,1);update();if(intro<1)requestAnimationFrame(loop)})();
+  layout();
+
+  // colour pickers
+  function swatches(id,list,prop){
+    var box=$(id);
+    list.forEach(function(c,i){
+      var b=document.createElement('button');
+      b.style.setProperty('--c',c.c);b.setAttribute('aria-label',c.n);b.title=c.n;
+      b.setAttribute('aria-pressed',i===0);
+      b.onclick=function(){
+        document.documentElement.style.setProperty(prop,c.c);
+        $$('button',box).forEach(function(x){x.setAttribute('aria-pressed',x===b)});
+      };
+      box.appendChild(b);
+    });
+  }
+  swatches('#inks',[{n:'Coral',c:'#f76f53'},{n:'Ocean',c:'#3b82f6'},{n:'Mint',c:'#14b8a6'},{n:'Violet',c:'#8b5cf6'},{n:'Marigold',c:'#f5a524'}],'--ink');
+  swatches('#grips',[{n:'Peach',c:'#ffb199'},{n:'Mint',c:'#8fe3c3'},{n:'Lilac',c:'#c4b0ff'},{n:'Sky',c:'#9cd3ff'}],'--grip');
+
+  // e-ink quote cycling
+  var quotes=['One page at a time.','Small steps still count.','Breathe. Then begin.','You’ve got this.','Progress, not perfect.','Be kind to your mind.'];
+  var qt=$('#qtext'),qg=$('#qgroup'),qi=0,NS='http://www.w3.org/2000/svg';
+  var day0=new Date().getDay(),DAYS=['SUN','MON','TUE','WED','THU','FRI','SAT'],qd=$('#qday');
+  function wrap(s){var out=[],cur='';s.split(' ').forEach(function(w){if((cur+' '+w).trim().length>12&&cur){out.push(cur);cur=w}else cur=(cur+' '+w).trim()});out.push(cur);return out}
+  function show(){
+    qd.textContent=DAYS[(day0+qi)%7];
+    qt.textContent='';
+    wrap(quotes[qi]).forEach(function(l,j){var ts=document.createElementNS(NS,'tspan');ts.setAttribute('x','50');ts.setAttribute('dy',j?'6.4':'0');ts.textContent=l;qt.appendChild(ts)});
+  }
+  show();
+  setInterval(function(){qg.style.opacity=0;setTimeout(function(){qi=(qi+1)%quotes.length;show();qg.style.opacity=1},650)},4200);
+
+  // locked scroll speed: input only sets a target, the page travels there at a capped speed
+  if(!matchMedia('(prefers-reduced-motion: reduce)').matches){
+    var MAX_SPEED=1600,LEAD=1400,cur=scrollY,target=scrollY,last=0,running=false;
+    var maxY=function(){return document.documentElement.scrollHeight-innerHeight};
+    var step=function(now){
+      var dt=Math.min(.05,(now-last)/1000),diff=target-cur;
+      last=now;
+      if(Math.abs(diff)<.5){cur=target;running=false}
+      else cur+=clamp(diff*.12,-MAX_SPEED*dt,MAX_SPEED*dt);
+      scrollTo(0,cur);
+      if(running)requestAnimationFrame(step);
+    };
+    var go=function(){if(!running){running=true;last=performance.now();requestAnimationFrame(step)}};
+    var push=function(d){target=clamp(target+d,Math.max(0,cur-LEAD),Math.min(maxY(),cur+LEAD));go()};
+
+    addEventListener('scroll',function(){if(Math.abs(scrollY-cur)>3){cur=target=scrollY}},{passive:true});
+    addEventListener('wheel',function(e){
+      if(e.ctrlKey)return;
+      e.preventDefault();
+      push(e.deltaMode===1?e.deltaY*32:e.deltaMode===2?e.deltaY*innerHeight:e.deltaY);
+    },{passive:false});
+    addEventListener('keydown',function(e){
+      var k=e.key,d=0;
+      if(/INPUT|TEXTAREA|SELECT/.test(e.target.tagName)||e.metaKey||e.ctrlKey||e.altKey)return;
+      if(k===' '&&/BUTTON|^A$/.test(e.target.tagName))return;
+      if(k==='ArrowDown')d=120;
+      else if(k==='ArrowUp')d=-120;
+      else if(k==='PageDown'||(k===' '&&!e.shiftKey))d=innerHeight*.8;
+      else if(k==='PageUp'||(k===' '&&e.shiftKey))d=-innerHeight*.8;
+      else if(k==='Home'){e.preventDefault();target=0;go();return}
+      else if(k==='End'){e.preventDefault();target=maxY();go();return}
+      else return;
+      e.preventDefault();push(d);
+    });
+    var ty=0;
+    addEventListener('touchstart',function(e){ty=e.touches[0].clientY},{passive:true});
+    addEventListener('touchmove',function(e){
+      var y=e.touches[0].clientY;
+      e.preventDefault();push((ty-y)*1.1);ty=y;
+    },{passive:false});
+    $$('a[href="#buy"]').forEach(function(a){
+      a.addEventListener('click',function(e){e.preventDefault();target=Math.min(maxY(),$('#buy').offsetTop);go()});
+    });
+  }
+
+  // reveal cards
+  var io=new IntersectionObserver(function(es){es.forEach(function(e,i){if(e.isIntersecting){setTimeout(function(){e.target.classList.add('in')},i*110);io.unobserve(e.target)}})},{threshold:.25});
+  $$('.card').forEach(function(c){io.observe(c)});
+})();
+</script>
+</body>
+</html>
