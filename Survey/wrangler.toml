@@ -1,0 +1,14 @@
+# "name" must match your Worker's name exactly (Cloudflare dashboard > your project > Settings)
+name = "survey"
+main = "src/worker.js"
+compatibility_date = "2025-01-01"
+
+[assets]
+directory = "./public"        # static site files (index.html, metrics.html)
+binding = "ASSETS"
+run_worker_first = ["/api/*"] # only /api/* runs code, everything else is served as static files
+
+[[d1_databases]]
+binding = "DB"
+database_name = "survey"
+database_id = "1b1ec3b4-ffa8-4906-b2ce-307d65dd7005"
