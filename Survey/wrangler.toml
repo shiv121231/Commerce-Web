@@ -6,6 +6,3 @@ compatibility_date = "2025-01-01"
 binding = "DB"
 database_name = "survey"
 database_id = "1b1ec3b4-ffa8-4906-b2ce-307d65dd7005"
-
-[vars]
-ADMIN_TOKEN = "777fc050a7b07470d5a5aa39b7248b87ebcdb6a89e689108a3bfea5f22b9531f"
