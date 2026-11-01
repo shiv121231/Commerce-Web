@@ -516,12 +516,28 @@ nav .tabs button[aria-selected="true"]{background:var(--surface);color:var(--tex
   var views={survey:document.getElementById('surveyView'),pitch:document.getElementById('pitchView'),video:document.getElementById('videoView'),bibliography:document.getElementById('bibView')};
   var frame=document.getElementById('metricsFrame');
   var tabs=[].slice.call(document.querySelectorAll('nav .tabs button'));
+  var layers=[],swapTimer;
+  function hideNow(v){v.style.transition='none';v.classList.remove('open');v.style.zIndex='';void v.offsetWidth;v.style.transition=''}
+  function swapViews(name){
+    var next=views[name]||null;
+    clearTimeout(swapTimer);
+    if(next){
+      layers=layers.filter(function(v){return v!==next});
+      layers.push(next);
+      layers.forEach(function(v,i){v.style.zIndex=String(5+i)});
+      next.scrollTop=0;
+      next.classList.add('open');
+      swapTimer=setTimeout(function(){layers.slice(0,-1).forEach(hideNow);layers=layers.slice(-1)},450);
+    }else{
+      layers.forEach(function(v){v.classList.remove('open')});
+      swapTimer=setTimeout(function(){layers.forEach(hideNow);layers=[]},450);
+    }
+  }
   function show(name){
     if(name!=='product'&&!views[name])name='product';
     if(name==='survey'&&!frame.getAttribute('src'))frame.setAttribute('src',SRC);
-    Object.keys(views).forEach(function(k){views[k].classList.toggle('open',k===name)});
+    swapViews(name);
     document.body.style.overflow=name==='product'?'':'hidden';
-    if(views[name])views[name].scrollTop=0;
     tabs.forEach(function(b){b.setAttribute('aria-selected',b.dataset.tab===name)});
     try{history.replaceState(null,'',name==='product'?location.pathname+location.search:'#'+name)}catch(e){}
   }
