@@ -117,6 +117,18 @@ nav .tabs button[aria-selected="true"]{background:var(--surface);color:var(--tex
 .sec ul{padding-left:20px;margin-top:10px}
 .sec li{margin:6px 0}
 .sec li b{color:var(--text);font-weight:600}
+.sec.bib ul{padding-left:0;list-style:none}
+.sec.bib li{padding-left:2em;text-indent:-2em;margin:14px 0;font-size:15px}
+.sec.bib a{color:var(--ink);overflow-wrap:anywhere;transition:color .5s}
+/* video ad */
+.ad{max-width:1040px;margin:0 auto;padding:120px 24px 0;display:grid;grid-template-columns:1fr auto;gap:56px;align-items:center}
+.ad .curl{font-size:30px}
+.ad p{color:var(--muted);font-size:19px;line-height:1.5;margin-top:16px;max-width:420px}
+.ad mark{background:linear-gradient(transparent 58%,color-mix(in srgb,var(--ink) 42%,transparent) 58%);padding:0 .12em;margin:0 -.12em;border-radius:4px}
+.ad-frame{position:relative;width:min(340px,100%);justify-self:center;border-radius:36px;overflow:hidden;background:#000;border:1px solid var(--line);box-shadow:0 30px 60px rgba(40,25,10,.22)}
+.ad-frame video{display:block;width:100%;aspect-ratio:9/16;max-height:80vh;object-fit:contain;background:#000;cursor:pointer}
+.ad-btn{position:absolute;right:14px;bottom:14px;font:inherit;font-size:13px;font-weight:600;border:0;border-radius:99px;padding:8px 14px;background:rgba(0,0,0,.55);color:#fff;backdrop-filter:blur(10px);cursor:pointer}
+@media (max-width:800px){.ad{grid-template-columns:1fr;gap:32px;text-align:center;padding-top:90px}.ad p{margin-inline:auto}}
 @media (max-width:800px){nav{gap:10px;padding:8px 8px 8px 12px}nav b{display:none}.sec{padding:22px}}
 </style>
 </head>
@@ -241,6 +253,21 @@ nav .tabs button[aria-selected="true"]{background:var(--surface);color:var(--tex
   </div>
 </div>
 
+<section class="ad" id="watch">
+  <div>
+    <div class="curl">Watch</div>
+    <h2>One pen. <mark>Less stress.</mark></h2>
+    <p>A quick look at how One Pen helps you study calmer.</p>
+  </div>
+  <div class="ad-frame">
+    <video id="adVideo" muted loop playsinline preload="metadata" aria-label="One Pen advert">
+      <source src="ad.webm" type="video/webm">
+      <source src="ad.mp4" type="video/mp4">
+    </video>
+    <button class="ad-btn" id="adSound" type="button" aria-pressed="false" aria-label="Turn sound on">Sound off</button>
+  </div>
+</section>
+
 <section class="feat">
   <h2>Everything for a <em class="curl">calmer</em> term.</h2>
   <p>Small details that take the stress out of studying.</p>
@@ -286,7 +313,7 @@ nav .tabs button[aria-selected="true"]{background:var(--surface);color:var(--tex
       </ul></div>
 
     <div class="sec"><h3><span>3</span>Addressing the Challenge</h3>
-      <p>The main challenge is student stress and lack of motivation during studying. Research shows that <mark>66% of Australian students</mark> experience study-related stress weekly or more frequently (Studiosity, 2025). One Pen addresses this through its squishy grip, which provides sensory interaction, and its motivational display, which offers encouragement. Its erasable ink also reduces frustration when students make mistakes. Although it cannot eliminate stress, it aims to make studying more comfortable.</p></div>
+      <p>The main challenge is student stress and lack of motivation during studying. Research shows that <mark>66% of Australian students</mark> experience study-related stress weekly or more frequently. One Pen addresses this through its squishy grip, which provides sensory interaction, and its motivational display, which offers encouragement. Its erasable ink also reduces frustration when students make mistakes. Although it cannot eliminate stress, it aims to make studying more comfortable.</p></div>
 
     <div class="sec"><h3><span>4</span>List of Inputs</h3>
       <p>The main inputs needed to produce One Pen include:</p>
@@ -304,6 +331,17 @@ nav .tabs button[aria-selected="true"]{background:var(--surface);color:var(--tex
 
     <div class="sec"><h3><span>6</span>Competitive Advantage</h3>
       <p>One Pen stands out because it combines a regular pen, fidget toy and motivational tool into one product. Unlike ordinary pens, it offers stress-relief features, motivational messages and personalisation. Its refillable design also provides convenience and reduces waste. These features give students more reasons to choose One Pen over traditional stationery.</p></div>
+
+    <div class="sec bib"><h3>Bibliography</h3>
+      <ul>
+        <li>Barbayannis, G., Bandari, M., Zheng, X., Baquerizo, H., Pecor, K. W., &amp; Ming, X. (2022). Academic stress and mental well-being in college students: Correlations, affected groups, and COVID-19. Frontiers in Psychology, 13(886344). <a href="https://doi.org/10.3389/fpsyg.2022.886344" target="_blank" rel="noopener">https://doi.org/10.3389/fpsyg.2022.886344</a></li>
+        <li>Student experiences: School stress. (2025). <a href="https://officeforyouth.nsw.gov.au/hubfs/Student%20Experiences%20Snapshot%20-%20School%20Stress.pdf" target="_blank" rel="noopener">https://officeforyouth.nsw.gov.au/hubfs/Student%20Experiences%20Snapshot%20-%20School%20Stress.pdf</a></li>
+        <li>Apple. (2025). Apple. Apple. <a href="https://www.apple.com/" target="_blank" rel="noopener">https://www.apple.com/</a></li>
+        <li>Zen Browser. (2025). Zen-Browser.App. <a href="https://zen-browser.app/" target="_blank" rel="noopener">https://zen-browser.app/</a></li>
+        <li>Pedersen, T. (2023, September 20). Stress balls: Effectiveness, benefits, and limits. Healthline. <a href="https://www.healthline.com/health/stress/do-stress-balls-work" target="_blank" rel="noopener">https://www.healthline.com/health/stress/do-stress-balls-work</a></li>
+        <li>Declaration of claude chat used for design purposes only, ALL information provided is Shivansh's and Asher's OWN research. <a href="https://claude.ai/share/1e013d12-e193-4145-8d0d-36df92de39c7" target="_blank" rel="noopener">https://claude.ai/share/1e013d12-e193-4145-8d0d-36df92de39c7</a></li>
+        <li>Github repository where all files are hosted. <a href="https://github.com/shiv121231/Commerce-Web" target="_blank" rel="noopener">https://github.com/shiv121231/Commerce-Web</a></li>
+      </ul></div>
   </div>
 </div>
 
@@ -472,6 +510,32 @@ nav .tabs button[aria-selected="true"]{background:var(--surface);color:var(--tex
   var h=location.hash.slice(1);
   if(h==='other')h='survey';
   if(views[h])show(h);
+})();
+</script>
+<script>
+(function(){
+  var v=document.getElementById('adVideo'),btn=document.getElementById('adSound'),blocked=false,visible=false;
+  function play(){var p=v.play();if(p&&p.catch)p.catch(function(){v.controls=true})}
+  v.addEventListener('loadedmetadata',function(){if(v.videoWidth&&v.videoHeight)v.style.aspectRatio=v.videoWidth+' / '+v.videoHeight});
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches){v.controls=true}
+  else new IntersectionObserver(function(es){
+    es.forEach(function(e){visible=e.isIntersecting;if(visible&&!blocked)play();else v.pause()});
+  },{threshold:.5}).observe(v);
+  btn.addEventListener('click',function(){
+    v.muted=!v.muted;
+    btn.textContent=v.muted?'Sound off':'Sound on';
+    btn.setAttribute('aria-pressed',String(!v.muted));
+    btn.setAttribute('aria-label',v.muted?'Turn sound on':'Turn sound off');
+  });
+  v.addEventListener('click',function(){v.paused?play():v.pause()});
+  // pause while the Survey / More tabs are open
+  [].forEach.call(document.querySelectorAll('nav .tabs button'),function(b){
+    b.addEventListener('click',function(){
+      blocked=b.dataset.tab!=='product';
+      if(blocked)v.pause();else if(visible)play();
+    });
+  });
+  document.querySelector('nav .pre').addEventListener('click',function(){blocked=false});
 })();
 </script>
 </body>
