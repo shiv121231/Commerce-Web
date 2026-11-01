@@ -117,19 +117,18 @@ nav .tabs button[aria-selected="true"]{background:var(--surface);color:var(--tex
 .sec ul{padding-left:20px;margin-top:10px}
 .sec li{margin:6px 0}
 .sec li b{color:var(--text);font-weight:600}
-.sec .ad-frame{margin:18px auto 0}
+.sec .film-frame{margin:18px auto 0}
 .sec.bib ul{padding-left:0;list-style:none}
 .sec.bib li{padding-left:2em;text-indent:-2em;margin:14px 0;font-size:15px}
 .sec.bib a{color:var(--ink);overflow-wrap:anywhere;transition:color .5s}
-/* video ad */
-.ad{max-width:1040px;margin:0 auto;padding:120px 24px 0;display:grid;grid-template-columns:1fr 340px;gap:56px;align-items:center}
-.ad .curl{font-size:30px}
-.ad p{color:var(--muted);font-size:19px;line-height:1.5;margin-top:16px;max-width:420px}
-.ad mark{background:linear-gradient(transparent 58%,color-mix(in srgb,var(--ink) 42%,transparent) 58%);padding:0 .12em;margin:0 -.12em;border-radius:4px}
-.ad-frame{position:relative;width:min(340px,100%);aspect-ratio:9/16;max-height:80vh;justify-self:center;border-radius:36px;overflow:hidden;background:#000;border:1px solid var(--line);box-shadow:0 30px 60px rgba(40,25,10,.22)}
-.ad-frame video{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#000;cursor:pointer}
-.ad-btn{position:absolute;right:14px;bottom:14px;font:inherit;font-size:13px;font-weight:600;border:0;border-radius:99px;padding:8px 14px;background:rgba(0,0,0,.55);color:#fff;backdrop-filter:blur(10px);cursor:pointer}
-@media (max-width:800px){.ad{grid-template-columns:1fr;gap:32px;text-align:center;padding-top:90px}.ad p{margin-inline:auto}}
+/* video */
+.showcase{max-width:1040px;margin:0 auto;padding:120px 24px 0;display:grid;grid-template-columns:1fr 340px;gap:56px;align-items:center}
+.showcase .curl{font-size:30px}
+.showcase p{color:var(--muted);font-size:19px;line-height:1.5;margin-top:16px;max-width:420px}
+.showcase mark{background:linear-gradient(transparent 58%,color-mix(in srgb,var(--ink) 42%,transparent) 58%);padding:0 .12em;margin:0 -.12em;border-radius:4px}
+.film-frame{position:relative;width:min(340px,100%);aspect-ratio:9/16;max-height:80vh;justify-self:center;border-radius:36px;overflow:hidden;background:#000;border:1px solid var(--line);box-shadow:0 30px 60px rgba(40,25,10,.22)}
+.film-frame video{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#000}
+@media (max-width:800px){.showcase{grid-template-columns:1fr;gap:32px;text-align:center;padding-top:90px}.showcase p{margin-inline:auto}}
 @media (max-width:800px){nav{gap:10px;padding:8px 8px 8px 12px}nav b{display:none}.sec{padding:22px}}
 </style>
 </head>
@@ -254,18 +253,18 @@ nav .tabs button[aria-selected="true"]{background:var(--surface);color:var(--tex
   </div>
 </div>
 
-<section class="ad" id="watch">
+<section class="showcase" id="watch">
   <div>
     <div class="curl">Watch</div>
     <h2>One pen. <mark>Less stress.</mark></h2>
     <p>A quick look at how One Pen helps you study calmer.</p>
   </div>
-  <div class="ad-frame">
-    <video id="adVideo" muted loop playsinline preload="metadata" aria-label="One Pen advert">
+  <div class="film-frame">
+    <video id="filmVideo" controls playsinline preload="metadata" aria-label="One Pen video">
+      <source src="onepen.webm" type="video/webm">
       <source src="ad.webm" type="video/webm">
-      <source src="ad.mp4" type="video/mp4">
+      <source src="onepen.mp4" type="video/mp4">
     </video>
-    <button class="ad-btn" id="adSound" type="button" aria-pressed="false" aria-label="Turn sound on">Sound off</button>
   </div>
 </section>
 
@@ -333,14 +332,14 @@ nav .tabs button[aria-selected="true"]{background:var(--surface);color:var(--tex
     <div class="sec"><h3><span>6</span>Competitive Advantage</h3>
       <p>One Pen stands out because it combines a regular pen, fidget toy and motivational tool into one product. Unlike ordinary pens, it offers stress-relief features, motivational messages and personalisation. Its refillable design also provides convenience and reduces waste. These features give students more reasons to choose One Pen over traditional stationery.</p></div>
 
-    <div class="sec"><h3>Watch the ad</h3>
+    <div class="sec"><h3>Watch the video</h3>
       <p>A quick look at how One Pen helps you study calmer.</p>
-      <div class="ad-frame">
-        <video id="adVideo2" muted loop playsinline preload="metadata" aria-label="One Pen advert">
+      <div class="film-frame">
+        <video id="filmVideo2" controls playsinline preload="metadata" aria-label="One Pen video">
+          <source src="onepen.webm" type="video/webm">
           <source src="ad.webm" type="video/webm">
-          <source src="ad.mp4" type="video/mp4">
+          <source src="onepen.mp4" type="video/mp4">
         </video>
-        <button class="ad-btn" id="adSound2" type="button" aria-pressed="false" aria-label="Turn sound on">Sound off</button>
       </div>
     </div>
 
@@ -526,29 +525,16 @@ nav .tabs button[aria-selected="true"]{background:var(--surface);color:var(--tex
 </script>
 <script>
 (function(){
-  var h=location.hash.slice(1),current=(h==='more'||h==='survey')?h:(h==='other'?'survey':'product');
-  var reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
-  var players=[['adVideo','adSound','product'],['adVideo2','adSound2','more']].map(function(c){
-    var v=document.getElementById(c[0]),btn=document.getElementById(c[1]),P={visible:false,ctx:c[2]};
-    P.play=function(){var p=v.play();if(p&&p.catch)p.catch(function(){v.controls=true})};
-    P.sync=function(){if(P.visible&&current===P.ctx)P.play();else v.pause()};
-    v.addEventListener('loadedmetadata',function(){if(v.videoWidth&&v.videoHeight)v.parentNode.style.aspectRatio=v.videoWidth+' / '+v.videoHeight});
-    if(reduce)v.controls=true;
-    else new IntersectionObserver(function(es){es.forEach(function(e){P.visible=e.isIntersecting;P.sync()})},{threshold:.5}).observe(v);
-    btn.addEventListener('click',function(){
-      v.muted=!v.muted;
-      btn.textContent=v.muted?'Sound off':'Sound on';
-      btn.setAttribute('aria-pressed',String(!v.muted));
-      btn.setAttribute('aria-label',v.muted?'Turn sound on':'Turn sound off');
-    });
-    v.addEventListener('click',function(){v.paused?P.play():v.pause()});
-    return P;
+  var vids=[['filmVideo','product'],['filmVideo2','more']].map(function(c){return{v:document.getElementById(c[0]),ctx:c[1]}});
+  vids.forEach(function(o){
+    // match the frame to the video's real shape
+    o.v.addEventListener('loadedmetadata',function(){if(o.v.videoWidth&&o.v.videoHeight)o.v.parentNode.style.aspectRatio=o.v.videoWidth+' / '+o.v.videoHeight});
+    // only one video plays at a time
+    o.v.addEventListener('play',function(){vids.forEach(function(x){if(x!==o)x.v.pause()})});
   });
-  // each video only plays while its own tab is showing
-  [].forEach.call(document.querySelectorAll('nav .tabs button'),function(b){
-    b.addEventListener('click',function(){current=b.dataset.tab;players.forEach(function(P){P.sync()})});
-  });
-  document.querySelector('nav .pre').addEventListener('click',function(){current='product';players.forEach(function(P){P.sync()})});
+  function leave(tab){vids.forEach(function(o){if(o.ctx!==tab)o.v.pause()})}
+  [].forEach.call(document.querySelectorAll('nav .tabs button'),function(b){b.addEventListener('click',function(){leave(b.dataset.tab)})});
+  document.querySelector('nav .pre').addEventListener('click',function(){leave('product')});
 })();
 </script>
 </body>
