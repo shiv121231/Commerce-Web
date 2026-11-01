@@ -130,11 +130,13 @@ nav .tabs button[aria-selected="true"]{background:var(--surface);color:var(--tex
 .film-frame video{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#000}
 @media (max-width:800px){.showcase{grid-template-columns:1fr;gap:32px;text-align:center;padding-top:90px}.showcase p{margin-inline:auto}}
 @media (max-width:800px){nav{gap:10px;padding:8px 8px 8px 12px}nav b{display:none}.sec{padding:22px}}
+@media (max-width:800px){nav{max-width:calc(100vw - 20px)}nav .tabs{overflow-x:auto;scrollbar-width:none}nav .tabs::-webkit-scrollbar{display:none}nav .tabs button{padding:7px 10px;font-size:12px}}
+@media (max-width:640px){nav a.pre{display:none}}
 </style>
 </head>
 <body>
 <div id="bar"></div>
-<nav><b>One Pen</b><div class="tabs" role="tablist"><button role="tab" data-tab="product" aria-selected="true">Product</button><button role="tab" data-tab="survey" aria-selected="false">Survey</button><button role="tab" data-tab="more" aria-selected="false">More</button></div><a class="pre" href="#buy">Pre-order</a></nav>
+<nav><b>One Pen</b><div class="tabs" role="tablist"><button role="tab" data-tab="product" aria-selected="true">Product</button><button role="tab" data-tab="survey" aria-selected="false">Survey</button><button role="tab" data-tab="pitch" aria-selected="false">Pitch</button><button role="tab" data-tab="video" aria-selected="false">Video</button><button role="tab" data-tab="bibliography" aria-selected="false">Bibliography</button></div><a class="pre" href="#buy">Pre-order</a></nav>
 
 <div id="track">
   <div id="stage">
@@ -294,11 +296,10 @@ nav .tabs button[aria-selected="true"]{background:var(--surface);color:var(--tex
   </div>
 </div>
 
-<div id="moreView" class="view" aria-label="More">
+<div id="pitchView" class="view" aria-label="Pitch">
   <div class="inner">
-    <div class="curl" style="font-size:30px">More</div>
+    <div class="curl" style="font-size:30px">Pitch</div>
     <h2>About <mark>One Pen</mark></h2>
-
     <div class="sec"><h3><span>1</span>What People Want – Market Survey</h3>
       <p>Students want stationery that is practical, affordable and helps make studying less stressful. The One Pen student survey aims to identify what features students value most. These include stress relief, motivation, personalisation and convenience. The product responds to these needs by combining writing with sensory and motivational features.</p></div>
 
@@ -331,8 +332,14 @@ nav .tabs button[aria-selected="true"]{background:var(--surface);color:var(--tex
 
     <div class="sec"><h3><span>6</span>Competitive Advantage</h3>
       <p>One Pen stands out because it combines a regular pen, fidget toy and motivational tool into one product. Unlike ordinary pens, it offers stress-relief features, motivational messages and personalisation. Its refillable design also provides convenience and reduces waste. These features give students more reasons to choose One Pen over traditional stationery.</p></div>
+  </div>
+</div>
 
-    <div class="sec"><h3>Watch the video</h3>
+<div id="videoView" class="view" aria-label="Video">
+  <div class="inner">
+    <div class="curl" style="font-size:30px">Video</div>
+    <h2>See <mark>One Pen</mark> in action</h2>
+    <div class="sec">
       <p>A quick look at how One Pen helps you study calmer.</p>
       <div class="film-frame">
         <video id="filmVideo2" controls playsinline preload="metadata" aria-label="One Pen video">
@@ -342,9 +349,14 @@ nav .tabs button[aria-selected="true"]{background:var(--surface);color:var(--tex
         </video>
       </div>
     </div>
+  </div>
+</div>
 
-    <div class="sec bib"><h3>Bibliography</h3>
-      <ul>
+<div id="bibView" class="view" aria-label="Bibliography">
+  <div class="inner">
+    <div class="curl" style="font-size:30px">Sources</div>
+    <h2>Bibliography</h2>
+    <div class="sec bib"><ul>
         <li>Barbayannis, G., Bandari, M., Zheng, X., Baquerizo, H., Pecor, K. W., &amp; Ming, X. (2022). Academic stress and mental well-being in college students: Correlations, affected groups, and COVID-19. Frontiers in Psychology, 13(886344). <a href="https://doi.org/10.3389/fpsyg.2022.886344" target="_blank" rel="noopener">https://doi.org/10.3389/fpsyg.2022.886344</a></li>
         <li>Student experiences: School stress. (2025). <a href="https://officeforyouth.nsw.gov.au/hubfs/Student%20Experiences%20Snapshot%20-%20School%20Stress.pdf" target="_blank" rel="noopener">https://officeforyouth.nsw.gov.au/hubfs/Student%20Experiences%20Snapshot%20-%20School%20Stress.pdf</a></li>
         <li>Apple. (2025). Apple. Apple. <a href="https://www.apple.com/" target="_blank" rel="noopener">https://www.apple.com/</a></li>
@@ -500,7 +512,7 @@ nav .tabs button[aria-selected="true"]{background:var(--surface);color:var(--tex
 <script>
 (function(){
   var SRC='https://survey.essdee.workers.dev/metrics?embed=1',ORIGIN='https://survey.essdee.workers.dev';
-  var views={survey:document.getElementById('surveyView'),more:document.getElementById('moreView')};
+  var views={survey:document.getElementById('surveyView'),pitch:document.getElementById('pitchView'),video:document.getElementById('videoView'),bibliography:document.getElementById('bibView')};
   var frame=document.getElementById('metricsFrame');
   var tabs=[].slice.call(document.querySelectorAll('nav .tabs button'));
   function show(name){
@@ -520,12 +532,13 @@ nav .tabs button[aria-selected="true"]{background:var(--surface);color:var(--tex
   });
   var h=location.hash.slice(1);
   if(h==='other')h='survey';
+  if(h==='more')h='pitch';
   if(views[h])show(h);
 })();
 </script>
 <script>
 (function(){
-  var vids=[['filmVideo','product'],['filmVideo2','more']].map(function(c){return{v:document.getElementById(c[0]),ctx:c[1]}});
+  var vids=[['filmVideo','product'],['filmVideo2','video']].map(function(c){return{v:document.getElementById(c[0]),ctx:c[1]}});
   vids.forEach(function(o){
     // match the frame to the video's real shape
     o.v.addEventListener('loadedmetadata',function(){if(o.v.videoWidth&&o.v.videoHeight)o.v.parentNode.style.aspectRatio=o.v.videoWidth+' / '+o.v.videoHeight});
